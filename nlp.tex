@@ -1,0 +1,80 @@
+\documentclass{report}
+
+\title{NLP Study Notes}
+\author{Du Jinrui}
+\date{2022}
+\usepackage[b6paper, margin=0.5in]{geometry}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\begin{document}
+  \maketitle
+  \tableofcontents
+  \chapter{Shortest-Path Algorithms and Dynamic Programming}
+  \section{Graphs}
+  \section{Dynamic programming}
+  When designing a DP algorithm, there are two things to consider:
+  \begin{enumerate}
+  	\item Deconstruct a big problem into smaller (recursive) sub-problems.
+	\item Store intermediate results.
+  \end{enumerate}
+  \subsection{DP coding problems}
+  \begin{itemize}
+    \item Nth Fibonacci Number
+    \item Longest Increasing Sub-sequence
+    \item Coin Change
+  \end{itemize}
+  \section{The Viterbi algorithm}
+
+  \chapter{Logistic Regression}
+  \section{The importance of establishing a baseline}
+  We draw a function that shows decreased marginal accuracy with increasing model complexity. From this graph, we observe an upper limit. This limit helps us making informed decisions like:
+		\begin{enumerate}
+			\item Is this project feasible? (the requirement is 75\% accuracy but the upper limit is 72\%.)
+			\item Is it cost-effective to add model complexity?
+		\end{enumerate}
+Furthermore, if we use a complex model upfront without setting a baseline but the accuracy is bad, then it's hard for us to tell whether there was a mistake when building the model or it's because the problem is too complex.
+
+  \section{Understanding LR}
+  graph of 1d data draft*
+
+  \href{https://towardsdatascience.com/why-sigmoid-a-probabilistic-perspective-42751d82686}{Why sigmoid?}
+  \section{Deriving the cost function}
+  The likelihood function is defined as $L\left( \theta|D \right) = P\left( D;\theta\right)  $, $;$ (parameterized by) is used to differentiate it from conditional probability, and the $L$ is not a probability density function either, but a function of $\theta$. 
+
+The likelihood function of logistic regression is 
+\begin{displaymath}
+\prod_{i=1}^{n} {\sigma\left( wx_{i} + b \right)^{y_{i}}\left( 1 - \sigma\left( wx_{i} + b\right)\right)^{1 - y_{i} }}.
+\end{displaymath} (\href{https://zstevenwu.com/courses/s20/csci5525/resources/slides/lecture05.pdf}{see derivation})
+Maximizing the likelihood is equal to minimizing the negative log-likelihood: \[
+	l\left( w, b \right) = -\sum_{i=1}^{n} y_{i} \ln \sigma \left(wx_{i} + b\right) + \left( 1 - y_{i} \right) \ln \left(1 - \sigma\left(wx_{i} + b\right)\right)
+.\] 
+And we get KL divergence, or binary cross-entropy, which is convex. (Why is it convex? And what is the difference between kl divergence and cross-entropy? draft*)
+  \section{Gradient descent}
+  The cost function can't be solved analytically, hence we use gradient descent.
+  The derivative of the sigmoid function is:
+  \[
+  \sigma(x)(1 - \sigma(x))
+  .\] 
+  Knowing this facilitates the calculation of the gradient: 
+  \begin{align*}
+	  \frac{\partial l(w, b)}{\partial w} & = \sum_{i = 1}^{n} (\sigma(wx_i + b) - y_i) x_i \\
+\frac{\partial l(w, b)}{\partial b} & = \sum_{i = 1}^{n} \sigma(wx_i + b) - y_i. 
+  \end{align*}
+  \section{Implement LR and mini-batch GD}
+  Between GD and stochastic GD, mini-batch GD finds the balance between robustness and efficiency. Moreover, it works well with GPU, and it helps escaping the saddle point.
+  draft*
+  \chapter{Generalization}
+  \section{When w goes to infinity}
+  If the problem is linearly separable, MLE is the largest when w goes to infinity:
+ \begin{align*}
+	p\left( y_{i}=1 | x_{i} ; w,b \right) &= \frac{1}{1 + e^{-(wx_{i} + b)} } \approx 1 \\
+	p( y_{i}=0 | x_{i} ; w,b ) &= \frac{e^{-(wx_{i}+b)}}{1 + e^{-(wx_{i} + b)}} \approx 0 
+.\end{align*}
+ \[
+	 MLE = argmax_{w, b} \prod_{i=1}^{n}  p\left( y_{i}=1 | x_{i} ; w,b \right)^{y_{i}}p\left( y_{i}=0 | x_{i} ; w,b \right)^{1 - y_{i}}  
+.\] 
+A large w is consistent with our goal of maximizing the likelihood function.
+
+ \href{http://eointravers.com/post/logistic-overfit/}{Why does logistic regression overfit in high-dimensions?
+}
+\end{document}
