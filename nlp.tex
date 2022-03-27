@@ -38,19 +38,18 @@ Furthermore, if we use a complex model upfront without setting a baseline but th
   graph of 1d data draft*
 
   \href{https://towardsdatascience.com/why-sigmoid-a-probabilistic-perspective-42751d82686}{Why sigmoid?}
-  \section{Deriving the cost function}
-  The likelihood function is defined as $L\left( \theta|D \right) = P\left( D;\theta\right)  $, $;$ (parameterized by) is used to differentiate it from conditional probability, and the $L$ is not a probability density function either, but a function of $\theta$. 
+  \section{From likelihood to cost function}
+  The likelihood function is defined as $l\left( \theta|D \right) = f\left( D|\theta\right) $. $f$ can be either a PMF or a PDF. $|$ is used instead of $;$ because we employ the Bayesian view (not frequenist) and see $\theta$ as a random variable. $l$ is a function of $\theta$ and doesn't integrate to 1 (with respect to $\theta$).
 
 The likelihood function of logistic regression is 
 \begin{displaymath}
 \prod_{i=1}^{n} {\sigma\left( wx_{i} + b \right)^{y_{i}}\left( 1 - \sigma\left( wx_{i} + b\right)\right)^{1 - y_{i} }}.
 \end{displaymath} (\href{https://zstevenwu.com/courses/s20/csci5525/resources/slides/lecture05.pdf}{see derivation})
 Maximizing the likelihood is equal to minimizing the negative log-likelihood: \[
-	l\left( w, b \right) = -\sum_{i=1}^{n} y_{i} \ln \sigma \left(wx_{i} + b\right) + \left( 1 - y_{i} \right) \ln \left(1 - \sigma\left(wx_{i} + b\right)\right)
+	cost\left( w, b \right) = -\sum_{i=1}^{n} y_{i} \ln \sigma \left(wx_{i} + b\right) + \left( 1 - y_{i} \right) \ln \left(1 - \sigma\left(wx_{i} + b\right)\right)
 .\] 
 And we get KL divergence, or binary cross-entropy, which is convex. (Why is it convex? And what is the difference between kl divergence and cross-entropy? draft*)
-  \section{Gradient descent}
-  The cost function can't be solved analytically, hence we use gradient descent.
+  \section{Implement LR with mini-batch GD}The cost function can't be solved analytically, hence we use gradient descent.
   The derivative of the sigmoid function is:
   \[
   \sigma(x)(1 - \sigma(x))
@@ -60,21 +59,33 @@ And we get KL divergence, or binary cross-entropy, which is convex. (Why is it c
 	  \frac{\partial l(w, b)}{\partial w} & = \sum_{i = 1}^{n} (\sigma(wx_i + b) - y_i) x_i \\
 \frac{\partial l(w, b)}{\partial b} & = \sum_{i = 1}^{n} \sigma(wx_i + b) - y_i. 
   \end{align*}
-  \section{Implement LR and mini-batch GD}
-  Between GD and stochastic GD, mini-batch GD finds the balance between robustness and efficiency. Moreover, it works well with GPU, and it helps escaping the saddle point.
-  draft*
+  Now we update the parameters:
+  \begin{align*}
+    w^{t+1} &= w^t - \eta_t \sum_{i=1}^{n} (\sigma(wx_i + b) - y_i) x_i \\
+    b^{t+1} &= b^t - \eta_t \sum_{i=1}^{n} \sigma(wx_i + b) - y_i
+  .\end{align*}
+Now we've got the updates using GD. The updates using mini-batch GD and stochastic GD become apparent. The former is:
+  \begin{align*}
+    w^{t+1} &= w^t - \eta_t \sum_{x_i, y_i \in batch}(\sigma(wx_i + b) - y_i) x_i \\
+    b^{t+1} &= b^t - \eta_t \sum_{x_i, y_i \in batch}\sigma(wx_i + b) - y_i
+  .\end{align*}
+
+  Between GD and stochastic GD, mini-batch GD finds the balance between robustness and efficiency. Moreover, it works well with GPU, and it helps escaping the saddle point. 
+
+  code draft*
   \chapter{Generalization}
   \section{When w goes to infinity}
-  If the problem is linearly separable, MLE is the largest when w goes to infinity:
+  When the problem is linearly separable, as w goes to infinity:
  \begin{align*}
-	p\left( y_{i}=1 | x_{i} ; w,b \right) &= \frac{1}{1 + e^{-(wx_{i} + b)} } \approx 1 \\
-	p( y_{i}=0 | x_{i} ; w,b ) &= \frac{e^{-(wx_{i}+b)}}{1 + e^{-(wx_{i} + b)}} \approx 0 
+	\lim_{w \to \infty} p\left( y_{i}=1 | x_{i} ; w,b \right) &=  \lim_{w \to \infty} \frac{1}{1 + e^{-(wx_{i} + b)} } = 1 \ for\ wx_i + b > 0,\\
+	\lim_{w \to \infty} p( y_{i}=0 | x_{i} ; w,b ) &= \lim_{w \to \infty} \frac{e^{-(wx_{i}+b)}}{1 + e^{-(wx_{i} + b)}} = 0\ for\ wx_i + b < 0 
 .\end{align*}
+At this time, MLE is the largest:
  \[
 	 MLE = argmax_{w, b} \prod_{i=1}^{n}  p\left( y_{i}=1 | x_{i} ; w,b \right)^{y_{i}}p\left( y_{i}=0 | x_{i} ; w,b \right)^{1 - y_{i}}  
 .\] 
-A large w is consistent with our goal of maximizing the likelihood function.
+It is consistent with our goal of maximizing the likelihood function to aim for a large w. For a linearly separable problem, LR doesn't converge, and regularization gives bounded solution.
 
- \href{http://eointravers.com/post/logistic-overfit/}{Why does logistic regression overfit in high-dimensions?
-}
+For a non-linearly separable problem, LR can converge (mathematically, why?). But when there are too many features, the non-separable becomes the separable, again, w goes to infinity, and uncertainty regions shrink to 0. At this point, limiting the magnitude of w leads to better generalization  and gives back uncertainty regions (how? And how does it relates to bias-variance trade-off? draft* We don't discuss feature selection here, why don't we just use feature selection?).
+\section{L1 and L2 regularization}
 \end{document}
