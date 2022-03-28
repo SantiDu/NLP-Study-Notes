@@ -6,6 +6,8 @@
 \usepackage[b6paper, margin=0.5in]{geometry}
 \usepackage{hyperref}
 \usepackage{amsmath}
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
 \begin{document}
   \maketitle
   \tableofcontents
@@ -82,10 +84,46 @@ Now we've got the updates using GD. The updates using mini-batch GD and stochast
 .\end{align*}
 At this time, MLE is the largest:
  \[
-	 MLE = argmax_{w, b} \prod_{i=1}^{n}  p\left( y_{i}=1 | x_{i} ; w,b \right)^{y_{i}}p\left( y_{i}=0 | x_{i} ; w,b \right)^{1 - y_{i}}  
+	 MLE = \argmax_{w, b} \prod_{i=1}^{n}  p\left( y_{i}=1 | x_{i} ; w,b \right)^{y_{i}}p\left( y_{i}=0 | x_{i} ; w,b \right)^{1 - y_{i}}  
 .\] 
-It is consistent with our goal of maximizing the likelihood function to aim for a large w. For a linearly separable problem, LR doesn't converge, and regularization gives bounded solution.
+It is consistent with our goal of maximizing the likelihood function to aim for a large w. For a linearly separable problem, w doesn't converge, and regularization gives bounded solution.
 
-For a non-linearly separable problem, LR can converge (mathematically, why?). But when there are too many features, the non-separable becomes the separable, again, w goes to infinity, and uncertainty regions shrink to 0. At this point, limiting the magnitude of w leads to better generalization  and gives back uncertainty regions (how? And how does it relates to bias-variance trade-off? draft* We don't discuss feature selection here, why don't we just use feature selection?).
+For a non-linearly separable problem, w can converge (mathematically, why?). But when there are too many features, the non-separable becomes the separable, again, w goes to infinity, and uncertainty regions shrink to 0. At this point, limiting the magnitude of w leads to better generalization  and gives back uncertainty regions. How are all these happening? \href{https://stackoverflow.com/questions/24666312/why-limit-the-weight-size-can-prevent-overfitting-in-machine-learning}{1} \href{https://stackoverflow.com/questions/34569903/how-does-having-smaller-values-for-parameters-help-in-preventing-over-fitting}{2} Graphically, higher degree terms variables with smaller w doesn't disappear, but go `out of range', e.g. $y = 6x_1 + 3x_2^2$ vs $y = 6x_1 + 0.1x_2^2$. draft* 
+
+\href{https://stats.stackexchange.com/q/569381/354019}{We don't discuss feature selection here, why don't we just use feature selection?} Is there an algorithm for separability testing?
 \section{L1 and L2 regularization}
+3d geometric moving representation of l1 and l2 and why l1 makes some parameters 0. draft*
+
+There are some disadvantages of l1 regularization:
+\begin{enumerate}
+	\item It's not differentiable everywhere, so gradient descent doesn't work, in this case we can use subgradient descent (I don't need to know the details).
+	\item When a group of collinear features exist, it randomly selects one feature, but we want the best feature. The lecturer says using elastic net can counter this problem but I don't know how. It's another topic. draft*
+\end{enumerate}
+
+\section{K-fold CV}
+When dataset is small, we can increase k. One extreme case is leave-one-out CV.
+
+\section{MLE, MAP and L1, L2}
+MLE: \[
+	p(D|\theta)
+.\] 
+MAP:
+\[
+	p(\theta|D) = \frac{p(D|\theta)p(\theta)}{p(D)} \propto p(D|\theta)p(\theta)
+.\] 
+MAP estimator: \[
+	\theta_{MAP} = \argmax_{\theta}\ prior\ \cdot\ likelihood
+.\] 
+Assume prior is $p(\theta) \sim N(0, \sigma^2)$,
+\begin{align*}
+	p(\theta) &= \frac{1}{\sqrt{2\pi} \sigma} \exp \left( -\frac{\theta^2}{2\sigma^2} \right) \\
+		  &\propto \exp \left( -\frac{
+		  \theta^2}{2\sigma^2} \right), \\
+		  \argmax_{\theta}\ \log(p(\theta)) &= \argmax_{\theta}\ \log \left( \exp \left( -\frac{\theta^2}{2\sigma^2} \right) \right) \\ 
+ &= \argmax_{\theta}\ -\frac{\theta^2}{2\sigma^2}, \\
+		  \theta_{MAP} &= \argmin_{\theta} - \log \ likelihood +  \frac{1}{2\sigma^2} \theta^2
+.\end{align*}
+This looks very familiar. MAP estimator with Gaussian prior equals adding a l2 regularization term to the cost function (and how does the $\lambda$ coefficient relates to the variance? draft*).
+
+Similarly when $p(\theta) \sim Laplace(0, b)$, the resulting cost function is added by l1 term.
 \end{document}
