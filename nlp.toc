@@ -13,3 +13,5 @@
 \contentsline {section}{\numberline {3.2}L1 and L2 regularization}{8}{section.3.2}%
 \contentsline {section}{\numberline {3.3}K-fold CV}{8}{section.3.3}%
 \contentsline {section}{\numberline {3.4}MLE, MAP and L1, L2}{8}{section.3.4}%
+\contentsline {chapter}{\numberline {4}Naive Bayes, Decision Tree and Random Forest}{10}{chapter.4}%
+\contentsline {section}{\numberline {4.1}Naive Bayes}{10}{section.4.1}%
