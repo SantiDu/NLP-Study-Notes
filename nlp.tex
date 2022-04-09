@@ -53,7 +53,7 @@ And we get KL divergence, or binary cross-entropy, which is convex. (Why is it c
 
 \subsection{On KL-divergence and cross-entropy}
 \subsection{Logistic loss}
-If the outcome space $y=\{-1, 1\}$ instead of  $y=\{0, 1\}$, then
+If the outcome space is $y=\{-1, 1\}$ instead of  $y=\{0, 1\}$, then
 \begin{align*}
 	p(y_i = 1 | f(x_i)) &= \sigma(f(x_i)) = \frac{1}{1 + e^{-f(x_i)}} \\
 	p(y_i = -1 | f(x_i)) &= 1 - \sigma(f(x_i)) = \frac{1}{1 + e^{f(x_i)}}
@@ -142,7 +142,43 @@ This looks very familiar. MAP estimator with Gaussian prior equals adding a l2 r
 
 Similarly when $p(\theta) \sim Laplace(0, b)$, the resulting cost function is added by l1 term.
 \chapter{SVM}
+\section{Decision theory and the statistical learning framework}
+input space: $X$\\
+action space: $A$\\
+output space: $y$\\
+loss: \[ l: A \times y \to R\]\\
+decision function: \[ f: X \to A\] \\
+risk: \[R(f) = E[l(f(x), y)] \]
+Bayesian decision function: \[ f^{\ast} = \argmin_{f} R(f) \]
+empirical risk: \[
+\hat{R}_n(f) = \frac{1}{n} \sum_{i=1}^{n} l(f(x_i), y_i)\]
+empirical risk minimizer: \[
+	\hat{f} = \argmin_{f} \hat{R}_n(f)
+\] 
+hypothesis space: $F$ \\
+constrained empirical risk minimizer: \[
+	\hat{f}_{n} = \argmin_{f \in F} \hat{R}
+\] \\
+constrained risk minimizer: \[
+	f^{\ast}_{F} = \argmin_{f \in F} R
+.\] 
 
+\section{Define SVM}
+
+input space: $R^n$ \\
+action space: $R$ \\
+output space: $\{-1, 1\}$\\
+hypothesis space: \[ F = \{ f(x) = w^T x | w \in R^d\}\]
+loss/hinge loss: \[ l\left( f(x), y \right) = \max(1 - y_if(x_i), 0) = \left( 1 - y_if(x_i) \right)_+ \]
+l2 regularization: \[
+	min_{w \in R^d}\sum_{i=1}^{n} \left( 1 -y_if_w(x_i) \right)_+ + \lambda\|w\|_2^2 
+,\] 
+How does minimizing w relates to minimizing the risk function? draft*\\
+$f_w(x_i)$ is called the score, and $y_if_w(x_i)$ is called the margin.
+
+graph of logistic loss, hinge loss, perceptron loss, zero-one loss, square loss with respect to margin draft*
+\section{Duality}
+\section{Kernel}
 \chapter{Naive Bayes, Decision Tree and Random Forest}
 \section{Naive Bayes}
 
