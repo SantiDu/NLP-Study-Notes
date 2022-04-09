@@ -2,8 +2,7 @@
 
 \title{NLP Study Notes}
 \author{Du Jinrui}
-\date{2022}
-\usepackage[b6paper, margin=0.5in]{geometry}
+\date{2022} \usepackage[b6paper, margin=0.5in]{geometry}
 \usepackage{hyperref}
 \usepackage{amsmath}
 \DeclareMathOperator*{\argmax}{arg\,max}
@@ -50,7 +49,23 @@ The likelihood function of logistic regression is
 Maximizing the likelihood is equal to minimizing the negative log-likelihood: \[
 	cost\left( w, b \right) = -\sum_{i=1}^{n} y_{i} \ln \sigma \left(wx_{i} + b\right) + \left( 1 - y_{i} \right) \ln \left(1 - \sigma\left(wx_{i} + b\right)\right)
 .\] 
-And we get KL divergence, or binary cross-entropy, which is convex. (Why is it convex? And what is the difference between kl divergence and cross-entropy? draft*)
+And we get KL divergence, or binary cross-entropy, which is convex. (Why is it convex?)
+
+\subsection{On KL-divergence and cross-entropy}
+\subsection{Logistic loss}
+If the outcome space $y=\{-1, 1\}$ instead of  $y=\{0, 1\}$, then
+\begin{align*}
+	p(y_i = 1 | f(x_i)) &= \sigma(f(x_i)) = \frac{1}{1 + e^{-f(x_i)}} \\
+	p(y_i = -1 | f(x_i)) &= 1 - \sigma(f(x_i)) = \frac{1}{1 + e^{f(x_i)}}
+.\end{align*}
+In both cases \[
+	p(y_i | f(x_i)) = \frac{1}{1 + e^{-y_if(x_i)}}
+.\]  
+The negative log-likelihood is \[
+	\sum_{i=1}^{n} \log(1 + e^{-y_if(x_i)})
+.\] 
+Which is called the log loss/logistic loss and it's the same thing as the cross-entropy loss.
+
   \section{Implement LR with mini-batch GD}The cost function can't be solved analytically, hence we use gradient descent.
   The derivative of the sigmoid function is:
   \[
@@ -126,10 +141,25 @@ Assume prior is $p(\theta) \sim N(0, \sigma^2)$,
 This looks very familiar. MAP estimator with Gaussian prior equals adding a l2 regularization term to the cost function (and how does the $\lambda$ coefficient relates to the variance? draft*).
 
 Similarly when $p(\theta) \sim Laplace(0, b)$, the resulting cost function is added by l1 term.
+\chapter{SVM}
 
 \chapter{Naive Bayes, Decision Tree and Random Forest}
 \section{Naive Bayes}
 
 \chapter{Text Processing}
-raw data 
+The text analytic workflow: \\ \linebreak
+raw data $\rightarrow$ word segmentation $\rightarrow$ cleaning (stopwords, lowercase, special character) $\rightarrow$ normalization (stemming, lemmazation) $\rightarrow$ feature extraction (tf-idf, word2vec) $\rightarrow$ modeling (classification, similarity measures)
+
+\section{Segmentation}
+\subsection{Tools for Chinese words segmentation}
+\begin{itemize}
+	\item Jieba: https://github.com/fxsjy/jieba
+	\item SnowNLP: https://github.com/isnowfy/snownlp
+	\item LTP: http://www.ltp-cloud.com/
+	\item HanNLP: https://github.com/hankcs/HanLP/
+\end{itemize}
+
+\subsection{Max matching algorithm}
+
 \end{document}
+
