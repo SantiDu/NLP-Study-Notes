@@ -141,6 +141,32 @@ Assume prior is $p(\theta) \sim N(0, \sigma^2)$,
 This looks very familiar. MAP estimator with Gaussian prior equals adding a l2 regularization term to the cost function (and how does the $\lambda$ coefficient relates to the variance? draft*).
 
 Similarly when $p(\theta) \sim Laplace(0, b)$, the resulting cost function is added by l1 term.
+\chapter{Theory of Convex Optimization}
+\section{Mathematical optimization}
+A mathematical optimization problem has the form:
+\begin{align*}
+	\text{minimize}\ &f_0(x) \\
+	\text{subject to}\ &f_i(x) \le  b_i,\ i = 1,2,\ldots,m,
+\end{align*}
+in which $f_0, f_1, \ldots, f_i$ are functions that map $R^d$ to $R$.
+
+In a linear programming problem,  $f_0, f_1, \ldots, f_i$ are linear, which means \[
+	f_i(\alpha x + \beta y) = \alpha f_i(x) + \beta f_i(y).
+\] For a convex optimization problem, we have \[
+	f_i(\alpha x + \beta y) \le  \alpha f_i(x) + \beta f_i(y)
+.\] , with $\alpha \ge 0, \beta \ge 0$ and $\alpha + \beta = 1$.
+Comparing linear programming problem and convex optimization problem, because convexity is less restricted, all linear problems are convex optimization problems. (I have problem understanding this, \href{https://math.stackexchange.com/q/4231709/727493}{this link} helps. draft*)
+\section{Least-squares, linear programming and convex optimization}
+Generally, mathematical optimization problems are hard to solve, but we present 3 exceptions in this section.
+\subsection{Least-squares}
+\subsection{Linear programming}
+\subsection{Convex optimization}
+\section{Non-linear optimization}
+Non-linear problems are optimization problems that are not linear, but not known to be convex.
+
+Finding a global minima is time-consuming, and finding a local minima is more of an art than a science.
+
+Formulating a non-linear problem is relatively straightforward, but the difficulty lies in solving it. While for a convex optimization problem, solving it is straightforward, but the challenge is in problem formulation. 
 \chapter{SVM}
 \section{Decision theory and the statistical learning framework}
 input space: $X$\\
@@ -165,7 +191,7 @@ constrained risk minimizer: \[
 
 \section{Define SVM}
 
-input space: $R^n$ \\
+input space: $R^d$ \\
 action space: $R$ \\
 output space: $\{-1, 1\}$\\
 hypothesis space: \[ F = \{ f(x) = w^T x | w \in R^d\}\]
@@ -174,6 +200,7 @@ l2 regularization: \[
 	min_{w \in R^d}\sum_{i=1}^{n} \left( 1 -y_if_w(x_i) \right)_+ + \lambda\|w\|_2^2 
 ,\] 
 How does minimizing w relates to minimizing the risk function? draft*\\
+Can we derive the loss function from a probability distribution like we did for logistic regression? draft*\\
 $f_w(x_i)$ is called the score, and $y_if_w(x_i)$ is called the margin.
 
 graph of logistic loss, hinge loss, perceptron loss, zero-one loss, square loss with respect to margin draft*
