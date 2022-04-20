@@ -1,3 +1,4 @@
+%!TEX program = xelatex
 \documentclass{report}
 
 \title{NLP Study Notes}
@@ -5,6 +6,8 @@
 \date{2022} \usepackage[b6paper, margin=0.5in]{geometry}
 \usepackage{hyperref}
 \usepackage{amsmath}
+\usepackage[UTF8]{ctex}
+
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \begin{document}
@@ -24,8 +27,8 @@
     \item Longest Increasing Sub-sequence
     \item Coin Change
   \end{itemize}
+  \section{Dynamic time warping}
   \section{The Viterbi algorithm}
-
   \chapter{Logistic Regression}
   \section{The importance of establishing a baseline}
   We draw a function that shows decreased marginal accuracy with increasing model complexity. From this graph, we observe an upper limit. This limit helps us making informed decisions like:
@@ -169,7 +172,7 @@ Finding a global minima is time-consuming, and finding a local minima is more of
 Formulating a non-linear problem is relatively straightforward, but the difficulty lies in solving it. While for a convex optimization problem, solving it is straightforward, but the challenge is in problem formulation. 
 \chapter{SVM}
 \section{Decision theory and the statistical learning framework}
-input space: $X$\\
+\noindent input space: $X$\\
 action space: $A$\\
 output space: $y$\\
 loss: \[ l: A \times y \to R\]\\
@@ -223,6 +226,50 @@ raw data $\rightarrow$ word segmentation $\rightarrow$ cleaning (stopwords, lowe
 \end{itemize}
 
 \subsection{Max matching algorithm}
+\noindent sentence: 经常有意见分歧\\
+dictionary: [“我们”，“经常”，“有”，“有意见”， “意见”， “分歧”]\\
+window size: 5
+
+\begin{itemize}
+	\item forward-max matching:\\
+		经常有意见\\
+		经常有意\\
+		经常有\\
+		经常 （check）
+	\item backward-max matching:\\
+		有意见分歧\\
+		意见分歧\\
+		见分歧\\
+		分歧 （check）
+\end{itemize}
+Both approaches gives 经常|有意见|分歧, which is not a meaningful split.
+
+\subsection{Segmentation considering semantic links}
+To get a semantically meaningful split, we use language model. For example, the unigram model. To use the model, calculate the probability of the whole sentence P( 经常有意见分歧) for every possible way of segmentation: \\ 
+by iid:\\
+P(经常|有意见|分歧) = P(经常) * P(有意见) * P(分歧) \\
+P(经常|有|意见|分歧) = P(经常) * P(有) * P(意见) * P(分歧),\\
+calculating the product of small numbers is not possible because of limited floating point precision, so we apply log transformation.
+
+Another problem is that, for a large text, there can be lots of ways to segment it, in this case we use the Viterbi algorithm to reduce the complexity.
+
+\section{Filtering of words}
+Stop words.
+
+Low frequency words. 
+
+\section{Normalization of words}
+Lemmazation.
+
+Stemming.
+
+\section{Spell correction}
+After segmentation, if we find some words are not in the dictionary, we use edit distance to correct these words. (How to segment a sentence if there is no corresponding words to a part of the sentence? What to do if multiple candidates have the same edit distance? draft*)
+
+Implement weighted edit distance: draft*
+
+To find the candidates for correction, we can ether compare a wrong word with all the other words in the dictionary, or, more efficiently, we generate `words' that are small distance away from the wrong word, then filter them according to the dictionary. Finally, we rank the rest candidates by the probability $\hat{c} = \argmax_{c \in candidates} p(c|s)$, by the Bayes theorem, $\hat{c} \propto \argmax_{c \in candidates} p(s|c) * p(c)$. The first term, the probability of typing the wrong word given the intended word is c, can be obtained from historical data. The second term, the probability of c appeared in the text, can be obtained from counting the number of appearance of the word in the corpus.
+
 
 \end{document}
 
