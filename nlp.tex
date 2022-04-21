@@ -256,7 +256,7 @@ Another problem is that, for a large text, there can be lots of ways to segment 
 \section{Filtering of words}
 Stop words.
 
-Low frequency words. Dropping low frequency words helps reducing computation time.
+Low frequency words. Dropping low frequency words helps reducing computation time. Usually 80\%(a majority) of words are low frequency.
 
 \section{Normalization of words}
 Lemmazation.
@@ -269,6 +269,8 @@ After segmentation, if we find some words are not in the dictionary, we use edit
 Implement weighted edit distance: draft*
 
 To find the candidates for correction, we can ether compare a wrong word with all the other words in the dictionary, or, more efficiently, we generate `words' that are small distance away from the wrong word, then filter them according to the dictionary. Finally, we rank the rest candidates by the probability $\hat{c} = \argmax_{c \in candidates} p(c|s)$, by the Bayes theorem, $\hat{c} \propto \argmax_{c \in candidates} p(s|c) * p(c)$. The first term, the probability of typing the wrong word given the intended word is c, can be obtained from historical data. The second term, the probability of c appeared in the text, can be obtained from counting the number of appearance of the word in the corpus.
+
+\href{https://github.com/li-aolong/li-aolong.github.io/issues/12}{Here} are a list of open source Chinese spell correction tools.
 
 \chapter{Text Representation}
 \section{TF-IDF}
