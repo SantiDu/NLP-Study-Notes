@@ -256,7 +256,7 @@ Another problem is that, for a large text, there can be lots of ways to segment 
 \section{Filtering of words}
 Stop words.
 
-Low frequency words. 
+Low frequency words. Dropping low frequency words helps reducing computation time.
 
 \section{Normalization of words}
 Lemmazation.
@@ -270,6 +270,18 @@ Implement weighted edit distance: draft*
 
 To find the candidates for correction, we can ether compare a wrong word with all the other words in the dictionary, or, more efficiently, we generate `words' that are small distance away from the wrong word, then filter them according to the dictionary. Finally, we rank the rest candidates by the probability $\hat{c} = \argmax_{c \in candidates} p(c|s)$, by the Bayes theorem, $\hat{c} \propto \argmax_{c \in candidates} p(s|c) * p(c)$. The first term, the probability of typing the wrong word given the intended word is c, can be obtained from historical data. The second term, the probability of c appeared in the text, can be obtained from counting the number of appearance of the word in the corpus.
 
+\chapter{Text Representation}
+\section{TF-IDF}
+To represent a text, there are several options. Boolean vector being one of them doesn't consider the number of occurrence of every word. Count vector does consider the occurrence, but it's not that the higher the frequency, the more important the word is. To classify several documents, if the same word appears in every document, then the word is not very useful for classifying that document. Conversely, those words appears only in certain types of documents are more useful for their classification.
+
+Tf-idf can solve this problem. It is a great baseline, and often better than neural networks. It is defined as: \[
+	tf\text{-}idf(t, d, D) = tf(t, d) \times idf(t, D)
+.\] 
+Term frequency is the same thing as the count vector, defined as the number of occurrence of a term t in a document d. Document frequency is the size of a subset of all the documents D where all the documents containing a term t. We divide document frequency by the total number of all the documents D to get inverse document frequency. 
+See \href{https://stackoverflow.com/q/27067992/9851286}{the effect of the log function in idf}. See \href{https://stats.stackexchange.com/q/166812/354019}{Why add 1 to idf}.
+Idf is the same for every document.
+
+\section{Text similarity}
 
 \end{document}
 
