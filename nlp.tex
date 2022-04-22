@@ -172,7 +172,7 @@ Finding a global minima is time-consuming, and finding a local minima is more of
 Formulating a non-linear problem is relatively straightforward, but the difficulty lies in solving it. While for a convex optimization problem, solving it is straightforward, but the challenge is in problem formulation. 
 \chapter{SVM}
 \section{Decision theory and the statistical learning framework}
-\noindent input space: $X$\\
+{\noindent input space: $X$}\\
 action space: $A$\\
 output space: $y$\\
 loss: \[ l: A \times y \to R\]\\
@@ -194,7 +194,7 @@ constrained risk minimizer: \[
 
 \section{Define SVM}
 
-input space: $R^d$ \\
+{\noindent input space: $R^d$} \\
 action space: $R$ \\
 output space: $\{-1, 1\}$\\
 hypothesis space: \[ F = \{ f(x) = w^T x | w \in R^d\}\]
@@ -226,7 +226,7 @@ raw data $\rightarrow$ word segmentation $\rightarrow$ cleaning (stopwords, lowe
 \end{itemize}
 
 \subsection{Max matching algorithm}
-\noindent sentence: 经常有意见分歧\\
+{\noindent sentence: 经常有意见分歧}\\
 dictionary: [“我们”，“经常”，“有”，“有意见”， “意见”， “分歧”]\\
 window size: 5
 
@@ -299,7 +299,7 @@ Idf is the same for every document.
 	To understand this formula, think about the geometric interpretation of dot product: $x \cdot y = \|x\|\|y\|\cos\theta$.
 \end{itemize}
 
-\section{Word vector}
+\section{Word2Vec}
 We talked about how to represent text, we will now talk about word representation. We could represent words by one-hot encoding:
 {\center
 “我们”: [1, 0, 0]\\
@@ -307,12 +307,20 @@ We talked about how to represent text, we will now talk about word representatio
 “他们”: [0, 0, 1]\\}
 But how to calculate the similarities between two words? The Euclidean distance of every pair of different words is $\sqrt{2} $, the cosine distance is $0$. 
 
-We introduce word vector. While one-hot matrix is sparse, word vector is dense, but every word vector has lesser elements than word vector, because the size of a one-hot vector is the number of all the words of a text, can be millions, while the size of every word vector is a hyperparamter that we can tune.
-
-The purpose of word vector is to quantify meaning. It is currently very effective. 
+We introduce word vector. While one-hot matrix is sparse, word vector is dense, but every word vector has lesser elements than word vector, because the size of a one-hot vector is the number of all the words of a text, can be millions, while the size of every word vector is a hyperparamter that we can tune. Normally, the more words we have, the longer the vectors we could set, but long vectors can leads to overfitting.
 
 To evaluate word vectors, we can use some dimension reduction method and visualize them.
 
-Once we have the word vectors, we can use them to represent sentence. One simple way is to calculate the average of the vectors of the words appeared in the sentence.
+Once we have the word vectors, we can use them to represent sentence. One simple way is to calculate the average of the vectors of the words appeared in the sentence (bag of words).
+
+The purpose of word vector is to quantify meaning. We have developed several ways of represent meaning, for example, denotational meaning, WordNet, and the aforementioned one-hot vector, but the most successful one for the computer to grasp is the distributional semantics, which says: a word's meaning is given by the words that frequently appear close-by.
+{\center
+``You shall know a word by the company it keeps'' (J.R.Firth 1957:11)}
+
+
+\subsection{SkipGram}
+SkipGram or Skip-NGram, opposite to CBOW which uses surrounding words to predict a central word, uses a central word to predict surrounding words. How many surrounding words is a hyperparameter we can tune, usually between 5 and 20.
+
+
 \end{document}
 
