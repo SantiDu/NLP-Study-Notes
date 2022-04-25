@@ -329,7 +329,9 @@ where $w$ stands for word, $T$ is the total number of words, $m$ is the window s
 
 As an example, the objective function of the sentence ``We love natural language processing'' with the window size equal to 1 is:\\ 
 	P(love | we)P(we | love)P(natural | love)P(love | natural)P(language | natural)P(natural | language)P(processing | language)P(language | processing) parameterized by context vector and center word vector of each word. \\
-	By using 2 kinds of vector for each word, we significantly simplify the calculation. Otherwise we have to apply Bayes theorem to calculate, for example, P(love | we) and P(we | love).
+	By using 2 kinds of vector for each word, we significantly simplify the calculation. Otherwise we have to apply Bayes theorem to calculate, for example, P(love | we) and P(we | love). 
+
+	We don't consider the distance between a context word and the center word. There are other algorithms that consider this, and they are useful for syntax parsing, but for semantics, position doesn't matter a lot.
 
 	Taking the negative log of the objective function, and apply the average of the function (\href{https://stats.stackexchange.com/q/267847/354019}{see the motivation of averaging the llh}), we get: \[
 	-\frac{1}{T} \sum_{t=1}^{T} \sum_{-m \le c \le m, c \neq 0} \log P(w_{t+c} | w_t; \theta)	
@@ -356,6 +358,11 @@ Now we calculate the gradient:
 which is the difference between the context word and the expected context word.
 \subsection{Negative sampling \& hierarchical softmax}
 
-	
+\section{Other word2vec algorithms}
+\subsection{Matrix factorization}
+\subsection{GloVe}
+\subsection{Gaussian embedding}
+
+\chapter{Language Model}
 \end{document}
 
