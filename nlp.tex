@@ -144,6 +144,8 @@ Assume prior is $p(\theta) \sim N(0, \sigma^2)$,
 This looks very familiar. MAP estimator with Gaussian prior equals adding a l2 regularization term to the cost function (and how does the $\lambda$ coefficient relates to the variance? draft*).
 
 Similarly when $p(\theta) \sim Laplace(0, b)$, the resulting cost function is added by l1 term.
+
+\chapter{Naive Bayes}
 \chapter{Theory of Convex Optimization}
 \section{Mathematical optimization}
 A mathematical optimization problem has the form:
@@ -209,8 +211,7 @@ $f_w(x_i)$ is called the score, and $y_if_w(x_i)$ is called the margin.
 graph of logistic loss, hinge loss, perceptron loss, zero-one loss, square loss with respect to margin draft*
 \section{Duality}
 \section{Kernel}
-\chapter{Naive Bayes, Decision Tree and Random Forest}
-\section{Naive Bayes}
+\chapter{Tree Based Models}
 
 \chapter{Text Processing}
 The text analytic workflow: \\ \linebreak
@@ -319,8 +320,27 @@ The purpose of word vector is to quantify meaning. We have developed several way
 
 
 \subsection{SkipGram}
-SkipGram or Skip-NGram, opposite to CBOW which uses surrounding words to predict a central word, uses a central word to predict surrounding words. How many surrounding words is a hyperparameter we can tune, usually between 5 and 20.
+SkipGram or Skip-NGram, opposite to CBOW(Continuous Bag of Words) which uses surrounding words to predict a center word, uses a center word to predict surrounding words. The number of surrounding words is a hyperparameter we can tune, usually between 5 and 20.
 
+The objective function is \[
+\prod_{t=1}^{T} \prod_{-m\le j \le m, j\neq 0} P(w_{t + j} | w_t; \theta)   
+,\] 
+where $w$ stands for word, $T$ is the total number of words, $m$ is the window size, and $\theta$, is the only parameter (not the only hyperparameter) we need to learn. It consists of 2 sets of vectors, a vector for each word as a context word, and a vector for each word as a center word. 
 
+As an example, the objective function of the sentence ``We love natural language processing'' with the window size equal to 1 is:\\ 
+	P(love | we)P(we | love)P(natural | love)P(love | natural)P(language | natural)P(natural | language)P(processing | language)P(language | processing) parameterized by context vector and center word vector of each word. \\
+	By using 2 kinds of vector for each word, we significantly simplify the calculation. Otherwise we have to apply Bayes theorem to calculate, for example, P(love | we) and P(we | love).
+
+	Taking the negative log of the objective function, and apply the average of the function (\href{https://stats.stackexchange.com/q/267847/354019}{see the motivation of averaging the llh}), we get: \[
+	-\frac{1}{T} \sum_{t=1}^{T} \sum_{-m \le j \le m, j \neq 0} \log P(w_{t+j} | w_t; \theta)	
+	.\]
+
+	Now, what is the function of $P(w_{t+j} | w_t; \theta)$? For each center word (or target word), the conditional probability must sum to 1, and for any number, to make it positive, we apply the exponential transform. The result is the softmax function: 
+	\[
+	\frac{e^{u_c \cdot v_t}}{\sum_{c \in context}e^{u_c \cdot v_t}}
+,\] where $u_c$ is the context vector of a word, $v_t$ is the vector of the target word. (Why use dot product but not cosine similarity? Why apply softmax to the output layer of the neural net? How to map our function to layers of the neural net? draft* ) \href{https://aegis4048.github.io/demystifying_neural_network_in_skip_gram_language_modeling}{Demystifying Neural Network in Skip-Gram Language Modeling}
+\subsection{Negative sampling \& hierarchical softmax}
+
+	
 \end{document}
 
