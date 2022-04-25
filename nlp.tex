@@ -323,22 +323,37 @@ The purpose of word vector is to quantify meaning. We have developed several way
 SkipGram or Skip-NGram, opposite to CBOW(Continuous Bag of Words) which uses surrounding words to predict a center word, uses a center word to predict surrounding words. The number of surrounding words is a hyperparameter we can tune, usually between 5 and 20.
 
 The objective function is \[
-\prod_{t=1}^{T} \prod_{-m\le j \le m, j\neq 0} P(w_{t + j} | w_t; \theta)   
+\prod_{t=1}^{T} \prod_{-m\le c \le m, c\neq 0} P(w_{t + c} | w_t; \theta)   
 ,\] 
-where $w$ stands for word, $T$ is the total number of words, $m$ is the window size, and $\theta$, is the only parameter (not the only hyperparameter) we need to learn. It consists of 2 sets of vectors, a vector for each word as a context word, and a vector for each word as a center word. 
+where $w$ stands for word, $T$ is the total number of words, $m$ is the window size, and $\theta$, is the only parameter (not the only hyperparameter) we need to learn. It consists of 2 sets of vectors, a vector for each word as a context word, and a vector for each word as a center (target) word. 
 
 As an example, the objective function of the sentence ``We love natural language processing'' with the window size equal to 1 is:\\ 
 	P(love | we)P(we | love)P(natural | love)P(love | natural)P(language | natural)P(natural | language)P(processing | language)P(language | processing) parameterized by context vector and center word vector of each word. \\
 	By using 2 kinds of vector for each word, we significantly simplify the calculation. Otherwise we have to apply Bayes theorem to calculate, for example, P(love | we) and P(we | love).
 
 	Taking the negative log of the objective function, and apply the average of the function (\href{https://stats.stackexchange.com/q/267847/354019}{see the motivation of averaging the llh}), we get: \[
-	-\frac{1}{T} \sum_{t=1}^{T} \sum_{-m \le j \le m, j \neq 0} \log P(w_{t+j} | w_t; \theta)	
+	-\frac{1}{T} \sum_{t=1}^{T} \sum_{-m \le c \le m, c \neq 0} \log P(w_{t+c} | w_t; \theta)	
 	.\]
 
-	Now, what is the function of $P(w_{t+j} | w_t; \theta)$? For each center word (or target word), the conditional probability must sum to 1, and for any number, to make it positive, we apply the exponential transform. The result is the softmax function: 
+	Now, what is the function of $P(w_{t+c} | w_t; \theta)$? For each center (target) word, the conditional probability must sum to 1, and for any number, to make it positive, we apply the exponential transform. The result is the softmax function: 
 	\[
-	\frac{e^{u_c \cdot v_t}}{\sum_{c \in context}e^{u_c \cdot v_t}}
-,\] where $u_c$ is the context vector of a word, $v_t$ is the vector of the target word. (Why use dot product but not cosine similarity? Why apply softmax to the output layer of the neural net? How to map our function to layers of the neural net? draft* ) \href{https://aegis4048.github.io/demystifying_neural_network_in_skip_gram_language_modeling}{Demystifying Neural Network in Skip-Gram Language Modeling}
+		\frac{e^{u_{c + t} \cdot v_t}}{\sum_{c' = -m, c' \neq 0}^{m} e^{u_{c' + t} \cdot v_t}}
+	,\] where $u_c$ and $u_{c'}$ are the context vector of a word, $v_t$ is the vector of the target word. (Why use dot product but not cosine similarity? Why apply softmax to the output layer of the neural net? How to map our function to layers of the neural net? draft* ) \href{https://aegis4048.github.io/demystifying_neural_network_in_skip_gram_language_modeling}{Demystifying Neural Network in Skip-Gram Language Modeling}
+
+Now we calculate the gradient:
+\begin{align*}
+	\frac{\partial}{\partial v_w} \log
+	\frac{e^{u_o \cdot v_w}}{\sum_{x} e^{u_x \cdot v_w}} &= \frac{\partial}{\partial v_w} \log e^{u_o \cdot v_w} - \log \sum_{x} e^{u_x \cdot v_w} \\
+									  &= \frac{\partial }{\partial v_w} u_o \cdot v_w -  \log \sum_{x} e^{u_{x} \cdot v_w} \\
+									  &= u_o - \frac{\partial }{\partial v_w} \log \sum_{x} e^{u_x \cdot v_w} \\
+									  &= u_o - \frac{1}{\sum_{x} e^{u_x \cdot v_w}} \frac{\partial }{\partial v_w} \sum_{y} e^{u_y \cdot v_w} \\
+									  &= u_o - \frac{1}{\sum_{x} e^{u_x \cdot v_w}}  \sum_{y} \frac{\partial }{\partial v_w} e^{u_y \cdot v_w} \\ 
+									  &= u_o - \frac{1}{\sum_{x} e^{u_x \cdot v_w}}  \sum_{y} e^{u_y \cdot v_w} u_y \\ 
+									  &= u_o - \sum_{y}  \frac{e^{u_y \cdot v_w}}{\sum_{x} e^{u_x \cdot v_w}} u_y \\
+									  &= u_o - \sum_{y} softmax(u_y \cdot v_w) u_y \\
+									  &= u_o - \sum_{y} P(y|w) u_y
+,\end{align*}
+which is the difference between the context word and the expected context word.
 \subsection{Negative sampling \& hierarchical softmax}
 
 	
