@@ -265,7 +265,7 @@ Lemmazation.
 Stemming.
 
 \section{Spell correction}
-After segmentation, if we find some words are not in the dictionary, we use edit distance to correct these words. (How to segment a sentence if there is no corresponding words to a part of the sentence? What to do if multiple candidates have the same edit distance? draft*)
+After segmentation, if we find some words are not in the dictionary, we use edit distance to correct these words. (How to segment a sentence if there is no corresponding words to a part of the sentence in the dictionary? What to do if multiple candidates have the same edit distance? draft*)
 
 Implement weighted edit distance: draft*
 
@@ -364,5 +364,61 @@ which is the difference between the context word and the expected context word.
 \subsection{Gaussian embedding}
 
 \chapter{Language Model}
+\section{Intro}
+\noindent The probability chain rule: \\
+\begin{align*}
+	p(w_1, w_2, w_3, \ldots, w_n) = &p (w_1) p(w_2 | w_1) p(w_3 | w_1, w_2)  \\ & \ldots \\ & p(w_n | w_1, w_2,\ldots,w_{n-1})
+.\end{align*}
+
+\noindent The Markov assumption:
+\begin{itemize}
+	\item 1st-order Markov assumption: \[
+			p(t_n | t_{n-1}, t_{n-2}, \ldots, t_1) = p(t_n | t_{n-1})
+	\] 
+	\item 2nd-order Markov assumption: \[
+			p(t_n | t_{n-1}, t_{n-2}, \ldots, t_1) = p(t_n | t_{n-1}, t_{n-2})
+	\] 
+	\item 3rd-order Markov assumption: \[
+			p(t_n | t_{n-1}, t_{n-2}, \ldots, t_1) = p(t_n | t_{n-1}, t_{n-2}, t_{n-3})
+	\] 
+\end{itemize}
+
+\noindent Now let's see an example, by the chain rule:\\
+\linebreak
+	P(I love nlp) = P(I) P(love | I) P(nlp | I, love)\\
+	\linebreak
+	By iid, we get the \textbf{unigram} model, but the unigram model doesn't consider the order of the words:\\
+{\center
+P(I love nlp) = P(I)P(love)P(nlp)} = P(love I nlp)\\
+
+\noindent By the 1st-order Markov assumption, we get the \textbf{bigram} model:\\
+
+{\center P(I love nlp) = P(I)P(love | I)P(nlp | love)}\\
+
+\noindent By the 2nd-order Markove assumption, we get the trigram model:\\
+
+{\center P(I love nlp) = P(I)P(love | I)P(nlp | I, love)}\\
+
+\noindent With the Nth-order Markove assumption, we train the model to get $P(w_n | w_{n-1}, w_{n-2}, \ldots, w_1)$ for every word w. When N gets large, it becomes in-efficient, and not every word is surrounded by the same group of words so the resulting matrix is sparse. So we avoid using large N. But how to train an n-gram model, or in another word, how to get $P(w_n | w_{n-1}, w_{n-2}, \ldots, w_1)$? Simply count the number of appearance of each term then divide by the corresponding total. Because it's very simple, I won't elaborate.
+
+\subsection{Smoothing}
+When a word appears in the test set but not in the training set, the probability of this word is 0, hence the probability of the whole sentence is 0, thus the model loses its power. To counter this, we use smoothing.
+
+\subsection{Perplexity}
+We could do extrinsic evaluation on trained models, by applying the models directly to a task, e.g., spell correction, then compare the efficacy. However, this is time-consuming. Another way is to apply train-val-test set split (intrinsic evaluation), so we can evaluate the models and then apply the model to different tasks (not only spell correction). However, this can be a bad approximation to the actual performance of the real task. Yet it is still helpful in pilot experiments.
+
+The metric we will use is perplexity: \[
+2^{-\frac{1}{n} \log P(w_1, w_2, \ldots, w_n)} = P(w_1, w_2, \ldots, w_n)^{-\frac{1}{n}} = \sqrt[n]{\frac{1}{P(w_1,w_2,\ldots,w_n)}} 
+.\] It is 2 (or any number, depending on the base of log) to the negative log likelihood. It measures the degree of complexity of a text, the lower the score, the higher the probability, and the text sounds more naturally to human. (See \href{https://www.youtube.com/watch?v=NCyCkgMLRiY}{this video} for intuition of perplexity)
+
+Perplexity of bigram models looks like this: \[
+	PP(W) = \sqrt[m]{\prod_{i=1}^{m} \prod_{j=1}^{|s_i|} \frac{1}{P(w^{(i)}_j|w^{(i)}_{j-1} )}  }, w^{(i)}_j \to \text{j-th word in i-th sentence}
+.\] 
+If we concatenate the sentences in W: \[
+	PP(W) = \sqrt[m]{\prod_{i=1}^{m} \frac{1}{P(w_i | w_{i-1}) }}, w_i \to \text{i-th word in test set}
+.\] 
+Log perplexity is easier to compute: \[
+	\log PP(W) = -\frac{1}{m} \sum_{i=1}^{m} \log P(w_i | w_{i-1})
+.\] 
 \end{document}
 
