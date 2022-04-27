@@ -7,7 +7,6 @@
 \usepackage{hyperref}
 \usepackage{amsmath}
 \usepackage[UTF8]{ctex}
-
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 \begin{document}
@@ -400,10 +399,6 @@ P(I love nlp) = P(I)P(love)P(nlp)} = P(love I nlp)\\
 {\center P(I love nlp) = P(I)P(love | I)P(nlp | I, love)}\\
 
 \noindent With the Nth-order Markove assumption, we train the model to get $P(w_n | w_{n-1}, w_{n-2}, \ldots, w_1)$ for every word w. When N gets large, it becomes in-efficient, and not every word is surrounded by the same group of words so the resulting matrix is sparse. So we avoid using large N. But how to train an n-gram model, or in another word, how to get $P(w_n | w_{n-1}, w_{n-2}, \ldots, w_1)$? Simply count the number of appearance of each term then divide by the corresponding total. Because it's very simple, I won't elaborate.
-
-\subsection{Smoothing}
-When a word appears in the test set but not in the training set, the probability of this word is 0, hence the probability of the whole sentence is 0, thus the model loses its power. To counter this, we use smoothing.
-
 \subsection{Perplexity}
 We could do extrinsic evaluation on trained models, by applying the models directly to a task, e.g., spell correction, then compare the efficacy. However, this is time-consuming. Another way is to apply train-val-test set split (intrinsic evaluation), so we can evaluate the models and then apply the model to different tasks (not only spell correction). However, this can be a bad approximation to the actual performance of the real task. Yet it is still helpful in pilot experiments.
 
@@ -420,5 +415,42 @@ If we concatenate the sentences in W: \[
 Log perplexity is easier to compute: \[
 	\log PP(W) = -\frac{1}{m} \sum_{i=1}^{m} \log P(w_i | w_{i-1})
 .\] 
+
+\subsection{Smoothing}
+When a word appears in the test set but not in the training set, the probability of this word is 0, hence the probability of the whole sentence is 0, thus the model loses its power. To counter this, we use smoothing.
+\begin{itemize}
+	\item Add-one Smoothing / Laplace Smoothing\\
+		Also used in naive Bayes:
+	\begin{align*}
+		P_{MLE}(w_i | w_{i-1}) &= \frac{c(w_{i-1}, w_i)}{c(w_i)}\\
+		P_{Add1}(w_i | w_{i-1}) &= \frac{c(w_{i-1}, w_i) + 1}{c(w_i) + V},
+	\end{align*}
+	where $c$ means count. $V$ is the total number of words in the text, so that the sum of the probability of none-existing words is 1.
+	\item Add-K Smoothing
+		\[
+		P_{Add-k}(w_i | w_{i-1}) = \frac{c(w_{i-1}, w_i) + k}{c(w_i) + kV}
+		,\] 
+		where $k$ is a hyperparameter. We choose the $k$ that minimize the perplexity.
+	\item Interpolation \\
+		\begin{align*}
+			P_{inter}(w_n | w_{n-1}, w_{n-2}) =& \lambda_1 P(w_n | w_{n-1}, w_{n-2}) \\
+			=& \lambda_2 P(w_n | w_{n-1})\\
+			=& \lambda_3 P(w_n)\\
+			\sum_{n=1}^{3} \lambda_i =& 1
+		.\end{align*}
+		(prove that mixture of random variables is also a random variable draft*)
+
+		The justification of adding bigram and unigram when using trigram is as follows:
+\begin{align*}
+&P(\text{kitchen}) = 0.2 
+		   &P(\text{kitchen} | \text{in the}) = 0\\
+		   &P(\text{in the kitchen}) = 0
+			  &P(\text{domus} | \text{in the domus}) = 0\\
+			  &P(\text{domus}) = 0\\
+\end{align*}
+If $P(\text{kitchen}) > P(\text{domus})$, then it shouldn't be that $P(\text{kitchen} | \text{in the}) = P(\text{domus} | \text{in the domus})$
+		
+\end{itemize}
+
 \end{document}
 
