@@ -14,6 +14,19 @@
   \tableofcontents
   \chapter{Shortest-Path Algorithms and Dynamic Programming}
   \section{Graphs}
+  \begin{itemize}
+  	\item Adjacency matrix \\
+		For a graph $G = \{V, E\}$, where $V$ is a set of vertices of size $m$, the adjacency matrix $M$ is of shape $m \times m$ where $M_{i,j}$ is the number of edges connecting the two vertices. 
+
+		For an undirected matrix, $M^T = M$.
+
+	The book says we can use a cost adjacency matrix to represent the weight of edges setting the weight to $\infty$ when there is no link between two vertices. However I notice that when there are two edges between two vertices, there is only one weight in the cost adjacency matrix for the two edges. It's probably better to use incident matrix together with the weight matrix both to avoid using $\infty$ and when there are two edges between two vertices? (draft*)
+	\item Incident matrix \\
+In an incident matrix, the rows names are vertices, the columns names are edges.
+	\item Next-node lists \\ 
+		For example:\\
+		$\text{next}(v_a) = \{v_b, v_c\}$, $\text{next}(v_b) = \{\}$, $\text{next}(v_c) = \{v_b\}$
+  \end{itemize}
   \section{Dynamic programming}
   When designing a DP algorithm, there are two things to consider:
   \begin{enumerate}
@@ -22,7 +35,7 @@
   \end{enumerate}
   \subsection{DP coding problems}
   \begin{itemize}
-    \item Nth Fibonacci Number
+	  \item \href{https://github.com/SantiDu/DSA/blob/main/DM-fibonacci_number.py}{Nth Fibonacci Number}
     \item Longest Increasing Sub-sequence
     \item Coin Change
   \end{itemize}
