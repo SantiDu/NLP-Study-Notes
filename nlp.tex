@@ -186,6 +186,11 @@ Non-linear problems are optimization problems that are not linear, but not known
 Finding a global minima is time-consuming, and finding a local minima is more of an art than a science.
 
 Formulating a non-linear problem is relatively straightforward, but the difficulty lies in solving it. While for a convex optimization problem, solving it is straightforward, but the challenge is in problem formulation. 
+
+\section{Convex sets}
+
+\section{Convex functions}
+
 \chapter{SVM}
 \section{Decision theory and the statistical learning framework}
 {\noindent input space: $X$}\\
@@ -294,7 +299,7 @@ Tf-idf can solve this problem. It is a great baseline, and often better than neu
 .\] 
 Term frequency is the same thing as the count vector, defined as the number of occurrence of a term t in a document d. Document frequency is the size of a subset of all the documents D where all the documents containing a term t. We divide document frequency by the total number of all the documents D to get inverse document frequency. 
 See \href{https://stackoverflow.com/q/27067992/9851286}{the effect of the log function in idf}. See \href{https://stats.stackexchange.com/q/166812/354019}{Why add 1 to idf}.
-Idf is the same for every document.
+Idf is the same for every document when $t$ is fixed.
 
 \section{Text similarity}
 \begin{itemize}
@@ -446,9 +451,9 @@ When a word appears in the test set but not in the training set, the probability
 		where $k$ is a hyperparameter. We choose the $k$ that minimize the perplexity.
 	\item Interpolation \\
 		\begin{align*}
-			P_{inter}(w_n | w_{n-1}, w_{n-2}) =& \lambda_1 P(w_n | w_{n-1}, w_{n-2}) \\
-			=& \lambda_2 P(w_n | w_{n-1})\\
-			=& \lambda_3 P(w_n)\\
+			P_{inter}(w_n | w_{n-1}, w_{n-2}) =& \lambda_1 P(w_n | w_{n-1}, w_{n-2}) +\\
+			& \lambda_2 P(w_n | w_{n-1}) +\\
+			& \lambda_3 P(w_n)\\
 			\sum_{n=1}^{3} \lambda_i =& 1
 		.\end{align*}
 		(prove that mixture of random variables is also a random variable draft*)
